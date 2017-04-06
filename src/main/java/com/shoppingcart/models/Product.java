@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Created by z00382545 on 4/6/17.
  */
+@Entity
 public class Product {
 
     @Id
