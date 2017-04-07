@@ -11,6 +11,8 @@ import com.stripe.Stripe;
 import com.stripe.exception.*;
 import com.stripe.model.Charge;
 import com.stripe.model.Customer;
+import com.stripe.model.Plan;
+import com.stripe.model.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -196,6 +198,33 @@ public class HomeController {
 
         return "forward:/";
 
+    }
+
+    @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
+    public String subscribe(HttpServletRequest request) throws CardException, APIException, AuthenticationException, InvalidRequestException, APIConnectionException {
+        // Set your secret key: remember to change this to your live secret key in production
+        // See your keys here: https://dashboard.stripe.com/account/apikeys
+        Stripe.apiKey = "sk_test_p5VUQTAeJjAbqQb6qZJBQDqu";
+
+//        Map<String, Object> params = new HashMap<String, Object>();
+//        params.put("name", "Basic Plan");
+//        params.put("id", "basic-monthly");
+//        params.put("interval", "month");
+//        params.put("currency", "usd");
+//        params.put("amount", 900);
+//
+//        Plan plan = Plan.create(params);
+
+        List<User> userList = (List<User>) userRepository.findAll();
+        String customerId = userList.get(0).getStripeId();
+
+        Map<String, Object> subscriptionParams = new HashMap<String, Object>();
+        subscriptionParams.put("customer", customerId);
+        subscriptionParams.put("plan", "basic-monthly");
+
+        Subscription subscription = Subscription.create(subscriptionParams);
+
+        return "forward:/";
     }
 
 
