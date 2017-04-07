@@ -43,16 +43,18 @@ public class HomeController {
         return "home";
     }
 
-    @RequestMapping(value = "/addToCart")
+    @RequestMapping("/addToCart")
     public String addToCart(@RequestParam Long id) {
         Product product = productRepository.findOne(id);
 
         CartItem cartItem = new CartItem();
         cartItem.setProduct(product);
         cartItem.setQty(1);
-        cartItem.setSubTotal(new BigDecimal(product.getPrice()));
+        cartItem.setSubTotal(new BigDecimal(product.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
         cartItemRepository.save(cartItem);
 
         return "redirect:/";
     }
+
+
 }

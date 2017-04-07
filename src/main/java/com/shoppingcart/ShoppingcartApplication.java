@@ -23,12 +23,12 @@ public class ShoppingcartApplication implements CommandLineRunner {
 		Product product1 = new Product();
 		product1.setName("macbook");
 		product1.setDescription("Just when you thought your MacBook Pro was state of the art, Apple introduces the MF839LL/A 13\" MacBook Pro with new advanced processing power and graphics.");
-		product1.setPrice(1129);
+		product1.setPrice(1129.23);
 
 		Product product2 = new Product();
 		product2.setName("iphone8");
 		product2.setDescription("Phone 8 dramatically improves the most important aspects of the iPhone experience. It introduces advanced new camera systems. The best performance and battery life ever in an iPhone. ");
-		product2.setPrice(978);
+		product2.setPrice(978.14);
 
 		if (productRepository.findByName("macbook")==null) {
 			productRepository.save(product1);
