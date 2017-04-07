@@ -90,7 +90,7 @@ public class HomeController {
         return "redirect:/";
     }
 
-    @RequestMapping("/pay")
+    @RequestMapping(value = "/pay", method = RequestMethod.POST)
     public String pay(HttpServletRequest request, Model model, @RequestParam double total) throws CardException, APIException, AuthenticationException, InvalidRequestException, APIConnectionException {
         // Set your secret key: remember to change this to your live secret key in production
         // See your keys here: https://dashboard.stripe.com/account/apikeys
@@ -111,7 +111,13 @@ public class HomeController {
 
         Charge charge = Charge.create(params);
 
-        return "redirect:/";
+        List<CartItem> cartItemList = (List<CartItem>) cartItemRepository.findAll();
+
+        for (CartItem item : cartItemList) {
+            cartItemRepository.delete(item);
+        }
+
+        return "forward:/";
     }
 
 
