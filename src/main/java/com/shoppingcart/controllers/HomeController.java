@@ -53,7 +53,15 @@ public class HomeController {
         cartItem.setSubTotal(new BigDecimal(product.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
         cartItemRepository.save(cartItem);
 
-        return "redirect:/";
+        return "forward:/";
+    }
+
+    @RequestMapping("/remove")
+    public String remove(@RequestParam Long id){
+
+        cartItemRepository.delete(id);
+
+        return "forward:/";
     }
 
 

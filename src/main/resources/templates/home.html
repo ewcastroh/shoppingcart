@@ -73,9 +73,9 @@
                     <td class="col-sm-1 col-md-1 text-center"><strong th:text="${item.product.price}" th:id="'price-'+${item.id}">$4.87</strong></td>
                     <td class="col-sm-1 col-md-1 text-center"><strong class="subtotal" th:text="${item.subTotal}" th:id="'subtotal-'+${item.id}">$14.61</strong></td>
                     <td class="col-sm-1 col-md-1">
-                        <button type="button" class="btn btn-warning btn-sm">
+                        <a type="button" class="btn btn-warning btn-sm" th:href="@{/remove(id=${item.id})}">
                             <span class="glyphicon glyphicon-remove"></span> Remove
-                        </button></td>
+                        </a></td>
                 </tr>
 
                 <tr>
