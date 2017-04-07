@@ -2,12 +2,15 @@ package com.shoppingcart.controllers;
 
 import com.shoppingcart.models.CartItem;
 import com.shoppingcart.models.Product;
+import com.shoppingcart.models.User;
 import com.shoppingcart.repository.CartItemRepository;
 import com.shoppingcart.repository.ProductRepository;
 import com.shoppingcart.repository.ShoppingCartRepository;
+import com.shoppingcart.repository.UserRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.*;
 import com.stripe.model.Charge;
+import com.stripe.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +37,9 @@ public class HomeController {
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @RequestMapping("/")
     public String home(Model model) {
@@ -92,6 +98,7 @@ public class HomeController {
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
     public String pay(HttpServletRequest request, Model model, @RequestParam double total) throws CardException, APIException, AuthenticationException, InvalidRequestException, APIConnectionException {
+
         // Set your secret key: remember to change this to your live secret key in production
         // See your keys here: https://dashboard.stripe.com/account/apikeys
         Stripe.apiKey = "sk_test_p5VUQTAeJjAbqQb6qZJBQDqu";
@@ -100,16 +107,24 @@ public class HomeController {
         // Get the payment token submitted by the form:
         String token = request.getParameter("stripeToken");
 
-        // Charge the user's card:
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("amount", (int) total*100);
-        params.put("currency", "usd");
-        params.put("description", "Example charge");
-        params.put("source", token);
+        // Create a Customer:
+        Map<String, Object> customerParams = new HashMap<String, Object>();
+        customerParams.put("email", "paying.user@example.com");
+        customerParams.put("source", token);
+        Customer customer = Customer.create(customerParams);
 
-        model.addAttribute("paymentSuccess", true);
+        // Charge the Customer instead of the card:
+        Map<String, Object> chargeParams = new HashMap<String, Object>();
+        chargeParams.put("amount", 1000);
+        chargeParams.put("currency", "usd");
+        chargeParams.put("customer", customer.getId());
+        Charge charge = Charge.create(chargeParams);
 
-        Charge charge = Charge.create(params);
+        // YOUR CODE: Save the customer ID and other info in a database for later.
+        User user = new User();
+        user.setStripeId(customer.getId());
+        user.setUsername("Customer1");
+        userRepository.save(user);
 
         List<CartItem> cartItemList = (List<CartItem>) cartItemRepository.findAll();
 
@@ -117,7 +132,35 @@ public class HomeController {
             cartItemRepository.delete(item);
         }
 
+        model.addAttribute("paymentSuccess", true);
+
         return "forward:/";
+    }
+
+    @RequestMapping(value = "/repay", method = RequestMethod.POST)
+    public String repay(HttpServletRequest request) throws CardException, APIException, AuthenticationException, InvalidRequestException, APIConnectionException {
+
+        // Set your secret key: remember to change this to your live secret key in production
+        // See your keys here: https://dashboard.stripe.com/account/apikeys
+        Stripe.apiKey = "sk_test_p5VUQTAeJjAbqQb6qZJBQDqu";
+
+        // Token is created using Stripe.js or Checkout!
+        // Get the payment token submitted by the form:
+        String token = request.getParameter("stripeToken");
+
+
+        List<User> userList = (List<User>) userRepository.findAll();
+        String customerId = userList.get(0).getStripeId();
+
+        // YOUR CODE (LATER): When it's time to charge the customer again, retrieve the customer ID.
+        Map<String, Object> chargeParams = new HashMap<String, Object>();
+        chargeParams.put("amount", 1500); // $15.00 this time
+        chargeParams.put("currency", "usd");
+        chargeParams.put("customer", customerId);
+        Charge charge = Charge.create(chargeParams);
+
+        return "forward:/";
+
     }
 
 

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/main.css" />
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 <div class="container" style="margin-bottom: 30px;">
@@ -102,8 +103,8 @@
 
                 </tbody>
             </table>
-            <script src="https://js.stripe.com/v3/"></script>
 
+            <h3>Pay for Shopping Cart</h3>
             <form action="/pay" method="post" id="payment-form">
                 <div class="form-row">
                     <input hidden="hidden" name="total" th:value="${total}" />
@@ -120,6 +121,13 @@
                 </div>
 
                 <button class="btn btn-primary btn-block">Pay</button>
+            </form>
+            <hr />
+
+            <br/><br/>
+            <h3>Repay without Payment Info</h3>
+            <form th:action="@{/repay}" method="post">
+                <button type="submit" class="btn btn-warning btn-block">Repay</button>
             </form>
         </div>
     </div>
