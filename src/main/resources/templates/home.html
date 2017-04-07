@@ -91,9 +91,19 @@
                     <td>   </td>
                     <td>   </td>
                     <td>
-                        <button type="button" class="btn btn-success">
-                            Checkout <span class="glyphicon glyphicon-play"></span>
-                        </button></td>
+                        <form th:action="@{/pay}" method="POST">
+                            <script
+                                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                    data-key="pk_test_0kmqMXFKamjJDXOoNJ1VHsFV"
+                                    data-amount=total
+                                    data-name="Demo Site"
+                                    data-description="Widget"
+                                    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                                    data-locale="auto">
+                            </script>
+                            <input hidden="hidden" name="total" id="hidden-total"/>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>

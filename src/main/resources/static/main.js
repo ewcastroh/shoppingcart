@@ -1,12 +1,11 @@
 /**
  * Created by z00382545 on 4/6/17.
  */
+var total = 0;
 
 $( document ).ready(function() {
-    var total = 0;
 
     $('.item-qty').on('input', function() {
-        total = 0;
 
         var id = this.id.substring(4);
         var qty = this.value;
@@ -19,6 +18,8 @@ $( document ).ready(function() {
         });
 
         $('#total').text(total);
+        $('#hidden-total').val(total);
+
     });
 
     $('.subtotal').each(function(){
@@ -26,4 +27,5 @@ $( document ).ready(function() {
     });
 
     $('#total').text(total);
+    $('#hidden-total').val(total);
 });

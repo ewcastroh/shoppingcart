@@ -5,15 +5,20 @@ import com.shoppingcart.models.Product;
 import com.shoppingcart.repository.CartItemRepository;
 import com.shoppingcart.repository.ProductRepository;
 import com.shoppingcart.repository.ShoppingCartRepository;
+import com.stripe.Stripe;
+import com.stripe.exception.*;
+import com.stripe.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by z00382545 on 4/6/17.
@@ -57,9 +62,33 @@ public class HomeController {
     }
 
     @RequestMapping("/remove")
-    public String remove(@RequestParam Long id){
+    public String remove(@RequestParam Long id) {
 
         cartItemRepository.delete(id);
+
+        return "forward:/";
+    }
+
+    @RequestMapping("/pay")
+    public String pay(HttpServletRequest request, Model model, @RequestParam double total) throws CardException, APIException, AuthenticationException, InvalidRequestException, APIConnectionException {
+        // Set your secret key: remember to change this to your live secret key in production
+// See your keys here: https://dashboard.stripe.com/account/apikeys
+        Stripe.apiKey = "sk_test_p5VUQTAeJjAbqQb6qZJBQDqu";
+
+// Token is created using Stripe.js or Checkout!
+// Get the payment token submitted by the form:
+        String token = request.getParameter("stripeToken");
+
+// Charge the user's card:
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("amount", (int) total*100);
+        params.put("currency", "usd");
+        params.put("description", "Example charge");
+        params.put("source", token);
+
+        model.addAttribute("paymentSuccess", true);
+
+        Charge charge = Charge.create(params);
 
         return "forward:/";
     }
