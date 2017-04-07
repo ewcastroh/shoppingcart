@@ -97,7 +97,7 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public String pay(HttpServletRequest request, Model model, @RequestParam double total) throws CardException, APIException, AuthenticationException, InvalidRequestException, APIConnectionException {
+    public String pay(HttpServletRequest request, Model model, @RequestParam double total) {
 
         // Set your secret key: remember to change this to your live secret key in production
         // See your keys here: https://dashboard.stripe.com/account/apikeys
@@ -111,14 +111,49 @@ public class HomeController {
         Map<String, Object> customerParams = new HashMap<String, Object>();
         customerParams.put("email", "paying.user@example.com");
         customerParams.put("source", token);
-        Customer customer = Customer.create(customerParams);
+        Customer customer = null;
+        try {
+            customer = Customer.create(customerParams);
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        } catch (InvalidRequestException e) {
+            e.printStackTrace();
+        } catch (APIConnectionException e) {
+            e.printStackTrace();
+        } catch (CardException e) {
+            e.printStackTrace();
+            model.addAttribute("invalidCard", true);
+            System.out.println("returning...");
+            return "forward:/";
+        } catch (APIException e) {
+            e.printStackTrace();
+        }
 
         // Charge the Customer instead of the card:
         Map<String, Object> chargeParams = new HashMap<String, Object>();
         chargeParams.put("amount", 1000);
         chargeParams.put("currency", "usd");
         chargeParams.put("customer", customer.getId());
-        Charge charge = Charge.create(chargeParams);
+
+        Map<String, String> initialMetadata = new HashMap<String, String>();
+        initialMetadata.put("order_id", "6735");
+        chargeParams.put("metadata", initialMetadata);
+        try {
+            Charge charge = Charge.create(chargeParams);
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        } catch (InvalidRequestException e) {
+            e.printStackTrace();
+        } catch (APIConnectionException e) {
+            e.printStackTrace();
+        } catch (CardException e) {
+            e.printStackTrace();
+            model.addAttribute("invalidCard", true);
+            System.out.println("returning...");
+            return "forward:/";
+        } catch (APIException e) {
+            e.printStackTrace();
+        }
 
         // YOUR CODE: Save the customer ID and other info in a database for later.
         User user = new User();

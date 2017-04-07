@@ -15,7 +15,7 @@
 
     <div class="row">
         <div class="col-sm-12 col-md-10 col-md-offset-1">
-            <span th:if="${paymentSuccess}"><h3 >Thank you for your payment. Your order is being processed.</h3><br /></span>
+            <span th:if="${paymentSuccess}" ><h3 class="bg-success" style="color: lightgreen;">Thank you for your payment. Your order is being processed.</h3><br /></span>
             <table class="table table-bordered table-hover table-condensed" style="margin-bottom: 30px;">
                 <thead>
                 <tr>
@@ -105,6 +105,7 @@
             </table>
 
             <h3>Pay for Shopping Cart</h3>
+            <span th:if="${invalidCard}" ><h3 class="bg-danger" style="color: darkred;">Invalid Card Information. Please verify your card information.</h3><br /></span>
             <form action="/pay" method="post" id="payment-form">
                 <div class="form-row">
                     <input hidden="hidden" name="total" th:value="${total}" />
