@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Shopping Cart</title>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
 </head>
 <body>
 <div class="container" style="margin-bottom: 30px;">
-    <div class="text-center"><h2  style="margin-top: 30px; margin-bottom: 30px;">Shopping Cart Demo</h2></div>
+    <div class="text-center"><h2 style="margin-top: 30px; margin-bottom: 30px;">Shopping Cart Demo</h2></div>
 
     <div class="row">
         <div class="col-sm-12 col-md-10 col-md-offset-1">
@@ -35,14 +35,14 @@
                 <tr th:each="prod: ${productList}">
                     <td th:text="${prod.name}"></td>
                     <td>
-                        <img class="img-responsive" th:src="'/'+${prod.name}+'.png'" />
+                        <img class="img-responsive" style="width:200px;" th:src="'/'+${prod.name}+'.png'"/>
                     </td>
                     <td th:text="${prod.description}">
                     </td>
                     <td th:text="${#numbers.formatDecimal(prod.price, 1, 2)}">
                     </td>
                     <td>
-                            <a th:href="@{/addToCart(id=${prod.id})}" class="btn btn-sm btn-primary">Add to Cart</a>
+                        <a th:href="@{/addToCart(id=${prod.id})}" class="btn btn-sm btn-primary">Add to Cart</a>
                     </td>
                 </tr>
                 </tbody>
@@ -52,7 +52,7 @@
                 <thead>
                 <tr>
                     <th>Product</th>
-                    <th>Quantity</th>
+                    <th><span style="margin-left: 40px;">Quantity</span></th>
                     <th class="text-center">Price</th>
                     <th class="text-center">SubTotal</th>
                     <th> </th>
@@ -60,49 +60,50 @@
                 </thead>
                 <tbody>
                 <tr th:each="item : ${cartItemList}">
-                    <td class="col-sm-8 col-md-6">
+                    <td class="col-sm-7">
                         <div class="media">
                             <div class="media-body">
-                                <h4 class="media-heading"><a href="#" th:text="${item.product.name}">Product name</a></h4>
+                                <h4 class="media-heading"><a href="#" th:text="${item.product.name}">Product name</a>
+                                </h4>
                                 <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+
                             </div>
-                        </div></td>
-                    <td class="col-sm-1 col-md-1" style="text-align: center">
-                        <input type="email" class="form-control item-qty" th:id="'qty-'+${item.id}" th:value="${item.qty}" />
+                        </div>
                     </td>
-                    <td class="col-sm-1 col-md-1 text-center"><strong th:text="${item.product.price}" th:id="'price-'+${item.id}">$4.87</strong></td>
-                    <td class="col-sm-1 col-md-1 text-center"><strong class="subtotal" th:text="${item.subTotal}" th:id="'subtotal-'+${item.id}">$14.61</strong></td>
-                    <td class="col-sm-1 col-md-1">
+                    <td class="col-sm-2" style="text-align: center">
+                        <form th:action="@{/updateCart}" method="post">
+                            <input hidden="hidden" name="id" th:value="${item.id}"/>
+                            <button th:id="'update-'+${item.id}" type="submit" class="btn-sm btn btn-info pull-left"
+                           style="height: 30px;display: none;">update</button>
+                        <input class="item-qty " th:id="'qty-'+${item.id}" name="qty"
+                                     th:value="${item.qty}" style="display: inline-block;width:50px;"/>
+                        </form>
+                    </td>
+                    <td class="col-sm-1 text-center"><strong th:text="${item.product.price}"
+                                                             th:id="'price-'+${item.id}">$4.87</strong></td>
+                    <td class="col-sm-1 text-center"><strong class="subtotal" th:text="${item.subTotal}"
+                                                             th:id="'subtotal-'+${item.id}">$14.61</strong>
+                    </td>
+                    <td class="col-sm-1">
                         <a type="button" class="btn btn-warning btn-sm" th:href="@{/remove(id=${item.id})}">
                             <span class="glyphicon glyphicon-remove"></span> Remove
                         </a></td>
                 </tr>
 
                 <tr>
-                    <td>   </td>
-                    <td>   </td>
-                    <td>   </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  </td>
                     <td><h5>Total</h5></td>
-                    <td class="text-right"><h5><strong id="total">$24.59</strong></h5></td>
+                    <td class="text-right"><h5><strong id="total" th:text="${total}">$24.59</strong></h5></td>
                 </tr>
                 <tr>
-                    <td>   </td>
-                    <td>   </td>
-                    <td>   </td>
-                    <td>   </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td></td>
                     <td>
-                        <form th:action="@{/pay}" method="POST">
-                            <script
-                                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                    data-key="pk_test_0kmqMXFKamjJDXOoNJ1VHsFV"
-                                    data-amount=total
-                                    data-name="Demo Site"
-                                    data-description="Widget"
-                                    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-                                    data-locale="auto">
-                            </script>
-                            <input hidden="hidden" name="total" id="hidden-total"/>
-                        </form>
+                        <button class="btn btn-primary">Checkout</button>
                     </td>
                 </tr>
                 </tbody>
