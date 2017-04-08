@@ -5,18 +5,26 @@
     <title>Shopping Cart</title>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/main.css" />
+    <link rel="stylesheet" href="/main.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
     <script src="https://js.stripe.com/v2/"></script>
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 <div class="container" style="margin-bottom: 30px;">
-    <div class="text-center"><h2 style="margin-top: 30px; margin-bottom: 30px;">Shopping Cart Demo</h2></div>
+    <div class="text-center">
+        <h2 style="margin-top: 30px; margin-bottom: 30px;display: inline-block;">Shopping Cart Demo</h2>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="display: inline-block;">
+            <span><a href="/stripe/">Stripe</a></span>
+            <span> / </span>
+            <span><a href="/paypal/">Paypal</a></span>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-sm-12 col-md-10 col-md-offset-1">
-            <span th:if="${paymentSuccess}" ><h3 class="bg-success" style="color: lightgreen;">Thank you for your payment. Your order is being processed.</h3><br /></span>
+            <span th:if="${paymentSuccess}"><h3 class="bg-success" style="color: lightgreen;">Thank you for your payment. Your order is being processed.</h3><br/></span>
             <table class="table table-bordered table-hover table-condensed" style="margin-bottom: 30px;">
                 <thead>
                 <tr>
@@ -46,7 +54,7 @@
                     <td th:text="${#numbers.formatDecimal(prod.price, 1, 2)}">
                     </td>
                     <td>
-                        <a th:href="@{/addToCart(id=${prod.id})}" class="btn btn-sm btn-primary">Add to Cart</a>
+                        <a th:href="@{/stripe/addToCart(id=${prod.id})}" class="btn btn-sm btn-primary">Add to Cart</a>
                     </td>
                 </tr>
                 </tbody>
@@ -75,12 +83,13 @@
                         </div>
                     </td>
                     <td class="col-sm-2" style="text-align: center">
-                        <form th:action="@{/updateCart}" method="post">
+                        <form th:action="@{/stripe/updateCart}" method="post">
                             <input hidden="hidden" name="id" th:value="${item.id}"/>
                             <button th:id="'update-'+${item.id}" type="submit" class="btn-sm btn btn-info pull-left"
-                           style="height: 30px;display: none;">update</button>
-                        <input class="item-qty " th:id="'qty-'+${item.id}" name="qty"
-                                     th:value="${item.qty}" style="display: inline-block;width:50px;"/>
+                                    style="height: 30px;display: none;">update
+                            </button>
+                            <input class="item-qty " th:id="'qty-'+${item.id}" name="qty"
+                                   th:value="${item.qty}" style="display: inline-block;width:50px;"/>
                         </form>
                     </td>
                     <td class="col-sm-1 text-center"><strong th:text="${item.product.price}"
@@ -89,7 +98,7 @@
                                                              th:id="'subtotal-'+${item.id}">$14.61</strong>
                     </td>
                     <td class="col-sm-1">
-                        <a type="button" class="btn btn-warning btn-sm" th:href="@{/remove(id=${item.id})}">
+                        <a type="button" class="btn btn-warning btn-sm" th:href="@{/stripe/remove(id=${item.id})}">
                             <span class="glyphicon glyphicon-remove"></span> Remove
                         </a></td>
                 </tr>
@@ -106,10 +115,10 @@
             </table>
 
             <h3>Pay for Shopping Cart</h3>
-            <span th:if="${invalidCard}" ><h3 class="bg-danger" style="color: darkred;">Invalid Card Information. Please verify your card information.</h3><br /></span>
-            <form action="/pay" method="post" id="payment-form">
+            <span th:if="${invalidCard}"><h3 class="bg-danger" style="color: darkred;">Invalid Card Information. Please verify your card information.</h3><br/></span>
+            <form action="/stripe/pay" method="post" id="payment-form">
                 <div class="form-row">
-                    <input hidden="hidden" name="total" th:value="${total}" />
+                    <input hidden="hidden" name="total" th:value="${total}"/>
 
                     <label for="card-element">
                         Credit or debit card
@@ -124,30 +133,30 @@
 
                 <button class="btn btn-primary btn-block">Pay</button>
             </form>
-            <hr />
+            <hr/>
 
             <br/><br/>
             <h3>Repay without Payment Info</h3>
-            <form th:action="@{/repay}" method="post">
+            <form th:action="@{/stripe/repay}" method="post">
                 <button type="submit" class="btn btn-warning btn-block">Repay</button>
             </form>
             <hr/>
 
             <br/><br/>
             <h3>Subscribe to a plan</h3>
-            <form th:action="@{/subscribe}" method="post">
+            <form th:action="@{/stripe/subscribe}" method="post">
                 <button type="submit" class="btn btn-info btn-block">Subscribe</button>
             </form>
             <hr/>
 
             <br/><br/>
-            <form action="/pay" method="post" id="payment-form-broken">
+            <form action="/stripe/pay" method="post" id="payment-form-broken">
                 <div class="form-row">
-                    <input hidden="hidden" name="total" th:value="${total}" />
+                    <input hidden="hidden" name="total" th:value="${total}"/>
 
                     <div class="form-group">
                         <label for="cardNumber">
-                        Card Number
+                            Card Number
                         </label>
                         <div id="cardNumber" class="form-control">
                             <!-- a Stripe Element will be inserted here. -->
