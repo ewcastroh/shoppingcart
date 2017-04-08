@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/main.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
-    <script src="https://js.stripe.com/v2/"></script>
-    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
 </head>
 <body>
 <div class="container" style="margin-bottom: 30px;">
@@ -24,7 +23,7 @@
 
     <div class="row">
         <div class="col-sm-12 col-md-10 col-md-offset-1">
-            <span th:if="${paymentSuccess}"><h3 class="bg-success" style="color: lightgreen;">Thank you for your payment. Your order is being processed.</h3><br/></span>
+            <span id="payment-success" style="display: none;"><h3 class="bg-success" style="color: lightgreen;">Thank you for your payment. Your order is being processed.</h3><br/></span>
             <table class="table table-bordered table-hover table-condensed" style="margin-bottom: 30px;">
                 <thead>
                 <tr>
@@ -114,11 +113,12 @@
                 </tbody>
             </table>
 
+            <div id="paypal-button"></div>
 
         </div>
     </div>
 </div>
-<script src="/stripe.js"></script>
+<script src="/paypal.js"></script>
 <script src="/main.js"></script>
 </body>
 </html>
